@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Glowing Forest for Sonja</title>
+<style>
+:root {
+/* Rich magical twilight/deep night forest background gradient */
+--forest-bg: radial-gradient(circle at 50% 35%, #0d1527 0%, #030611 100%);
+--neon-orange: #fff3d1;
+--neon-pink: #ff5e7e;
+--glow-primary: rgba(255, 94, 126, 0.6);
+--glow-secondary: rgba(255, 243, 209, 0.5);
+}
+
+body {
+margin: 0;
+padding: 0;
+background: var(--forest-bg);
+color: #fff;
+font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+min-height: 100vh;
+overflow: hidden;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: flex-start;
+}
+
+h1 {
+font-size: 2.2rem;
+margin-top: 25px;
+color: #fff;
+font-weight: 300;
+letter-spacing: 2px;
+text-shadow: 0 0 15px rgba(255, 94, 126, 0.4), 0 0 30px rgba(255, 94, 126, 0.2);
+z-index: 10;
+text-align: center;
+}
+
+/* The 3D Forest Floor Environment Container */
+.forest-container {
+position: relative;
+width: 90vw;
+height: 70vh;
+max-width: 900px;
+margin-top: 10px;
+border-bottom: 2px solid rgba(255, 255, 255, 0.05);
+perspective: 1000px;
+}
+
+/* Ground mist overlay for atmosphere */
+.forest-container::after {
+content: '';
+position: absolute;
+bottom: 0;
+left: 0;
+right: 0;
+height: 40px;
+background: linear-gradient(to top, rgba(13, 21, 39, 0.8), transparent);
+pointer-events: none;
+z-index: 2;
+}
+
+/* Interactive Note Overlay Box */
+.note-display {
+position: absolute;
+bottom: 30px;
+left: 50%;
+transform: translateX(-50%);
+background: rgba(4, 8, 18, 0.85);
+border: 1px solid var(--neon-pink);
+box-shadow: 0 0 25px var(--glow-primary);
+padding: 16px 35px;
+border-radius: 50px;
+font-size: 1.15rem;
+font-weight: 400;
+text-align: center;
+min-width: 320px;
+max-width: 85%;
+pointer-events: none;
+transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+opacity: 1;
+z-index: 100;
+color: #ffe4a0;
+backdrop-filter: blur(8px);
+-webkit-backdrop-filter: blur(8px);
+letter-spacing: 0.5px;
+}
+
+/* Flower Structure - elegant scaling and swaying reveal animation */
+.flower-item {
+position: absolute;
+bottom: -10px;
+display: flex;
+flex-direction: column;
+align-items: center;
+transform-origin: bottom center;
+cursor: pointer;
+opacity: 0;
+transform: scale(0) translateY(50px) rotate(-10deg);
+transition: transform 1.2s cubic-bezier(0.19, 1, 0.22, 1), opacity 1.2s ease;
+filter: drop-shadow(0 0 12px var(--glow-primary));
+}
+
+/* Class triggered on click to animate popping/raising up */
+.flower-item.revealed {
+transform: scale(1) translateY(0) rotate(0deg);
+opacity: 1;
+animation: gentleSway 6s ease-in-out infinite alternate;
+}
+
+/* Gentle ambient breathing/sway for the open flowers */
+@keyframes gentleSway {
+0% { transform: scale(1) rotate(-1.5deg); }
+100% { transform: scale(1.02) rotate(1.5deg); }
+}
+
+/* Elegant, organically layered stem */
+.flower-stem {
+width: 3px;
+height: var(--stem-height, 180px);
+background: linear-gradient(to top, #113318, #2ecc71);
+position: relative;
+border-radius: 3px;
+box-shadow: 0 0 6px rgba(46, 204, 113, 0.3);
+}
+
+/* Stem Leaves redesign: rounded organic teardrop shapes with glow */
+.flower-stem::before, .flower-stem::after {
+content: '';
+position: absolute;
+background: linear-gradient(135deg, #1b4d22, #2ecc71);
+width: 20px;
+height: 10px;
+border-radius: 10px 0 10px 0;
+opacity: 0.8;
+box-shadow: 0 0 5px rgba(46, 204, 113, 0.2);
+}
+.flower-stem::before { left: -18px; top: 45%; transform: rotate(-15deg); }
+.flower-stem::after { right: -18px; top: 65%; transform: rotate(105deg) scaleX(-1); }
+
+/* Flower Head Wrapper */
+.flower-head {
+position: absolute;
+top: -40px;
+width: 80px;
+height: 80px;
+display: flex;
+align-items: center;
+justify-content: center;
+transform: translateY(10px);
+}
+
+/* PRETTIER FIX: Stratified layered rose/lotus petal geometry configuration */
+.flower-petal_8 {
+position: absolute;
+width: 24px;
+height: 36px;
+background: linear-gradient(to top, #ff3366, #ff758c);
+border-radius: 50% 50% 50% 50% / 55% 55% 45% 45%;
+transform-origin: center 85%;
+left: calc(50% - 12px);
+top: calc(50% - 30px);
+box-shadow: inset 0 0 8px rgba(255,255,255,0.4), 0 0 15px rgba(255, 51, 102, 0.6);
+opacity: 0.95;
+}
+
+/* Inner layer of petals for a dense, lush bloom look */
+.flower-petal_inner {
+position: absolute;
+width: 18px;
+height: 28px;
+background: linear-gradient(to top, #ff758c, #ffb3c1);
+border-radius: 50% 50% 50% 50% / 55% 55% 45% 45%;
+transform-origin: center 85%;
+left: calc(50% - 9px);
+top: calc(50% - 24px);
+box-shadow: inset 0 0 5px rgba(255,255,255,0.5), 0 0 10px rgba(255, 117, 140, 0.5);
+z-index: 3;
+opacity: 0.9;
+}
+
+/* Radial layout for Outer layer (8 Petals spaced cleanly) */
+.flower-petal_8:nth-child(1) { transform: rotate(0deg); }
+.flower-petal_8:nth-child(2) { transform: rotate(45deg); }
+.flower-petal_8:nth-child(3) { transform: rotate(90deg); }
+.flower-petal_8:nth-child(4) { transform: rotate(135deg); }
+.flower-petal_8:nth-child(5) { transform: rotate(180deg); }
+.flower-petal_8:nth-child(6) { transform: rotate(225deg); }
+.flower-petal_8:nth-child(7) { transform: rotate(270deg); }
+.flower-petal_8:nth-child(8) { transform: rotate(315deg); }
+
+/* Radial layout for Inner layer (staggered by 22.5 deg to fill gaps beautifully) */
+.flower-petal_inner:nth-child(9) { transform: rotate(22.5deg); }
+.flower-petal_inner:nth-child(10) { transform: rotate(67.5deg); }
+.flower-petal_inner:nth-child(11) { transform: rotate(112.5deg); }
+.flower-petal_inner:nth-child(12) { transform: rotate(157.5deg); }
+.flower-petal_inner:nth-child(13) { transform: rotate(202.5deg); }
+.flower-petal_inner:nth-child(14) { transform: rotate(247.5deg); }
+.flower-petal_inner:nth-child(15) { transform: rotate(292.5deg); }
+.flower-petal_inner:nth-child(16) { transform: rotate(337.5deg); }
+
+/* Bright Soft Core Glow */
+.flower-center {
+position: absolute;
+width: 14px;
+height: 14px;
+background: radial-gradient(circle at center, #ffffff 0%, var(--neon-orange) 60%, #ffa726 100%);
+border-radius: 50%;
+z-index: 5;
+box-shadow: 0 0 15px #fff, 0 0 25px var(--neon-orange), 0 0 5px rgba(0,0,0,0.1);
+}
+
+/* Upgraded Fireflies: Floating magic particles dancing above the buds */
+.flower-Light {
+width: 6px;
+height: 6px;
+position: absolute;
+border-radius: 50%;
+animation: fireflyFloat 5s ease-in-out infinite alternate;
+}
+
+.flower-Light:nth-child(odd) {
+background-color: #fff4cc;
+box-shadow: 0 0 10px #fff, 0 0 20px #ffe4a0, 0 0 35px #ffe4a0;
+animation-duration: 4.5s;
+animation-delay: 0.5s;
+}
+.flower-Light:nth-child(even) {
+background-color: #ffb3c1;
+box-shadow: 0 0 10px #fff, 0 0 20px var(--neon-pink), 0 0 35px var(--neon-pink);
+animation-duration: 5.5s;
+animation-delay: 0s;
+}
+
+@keyframes fireflyFloat {
+0% { transform: translate(0, 0) scale(0.8); opacity: 0.4; }
+50% { transform: translate(15px, -35px) scale(1.1); opacity: 0.9; }
+100% { transform: translate(-10px, -70px) scale(0.7); opacity: 0.2; }
+}
+</style>
+</head>
+<body>
+
+<h1>🌸 Sonja's Glowing Forest 🌸</h1>
+<div class="note-display" id="activeNote">Click anywhere on the screen or box to start growing the flowers one after another...</div>
+
+<div class="forest-container" id="forest"></div>
+
+<script>
+const reasons = [
+"because i was her hero once.",
+"because she is absolutely beautiful.",
+"the way her smile completely brightens up my darkest days.",
+"how passionate and dedicated she is about the things and people she loves.",
+"because she has the kindest, most loveable lady Yaya has ever known.",
+"the sound of her laugh and grin honestly my favorite sound in the world.",
+"how safe and completely at home I feel whenever she is around.",
+"she remembers the little details.",
+"her incredible strength and the grace she shows or hide.",
+"the cute little expressions she makes when she's super focused.",
+"because she brings out the absolute best version of who I am, wish to do the same.",
+"the gentle, comforting way she offers support when things get tough.",
+"how effortlessly clever, and endlessly fun she is.",
+"the beautiful, unique perspective she brings to everyones life.",
+"simply because she is unconditionally herself, and she is perfect to me."
+];
+
+const forest = document.getElementById('forest');
+const activeNote = document.getElementById('activeNote');
+const flowerElementsArray = [];
+let nextFlowerIndex = 0;
+
+// Dynamically generate the 15 flower components
+reasons.forEach((text, i) => {
+const flowerItem = document.createElement('div');
+flowerItem.className = 'flower-item';
+
+const leftPosition = 5 + (i * 6.2); // Sized perfectly to avoid layout crush
+const stemHeight = 130 + (i % 3 * 45) + (Math.random() * 15);
+
+flowerItem.style.left = `${leftPosition}%`;
+flowerItem.style.bottom = `${15 + (i % 2 * 12)}px`;
+flowerItem.style.setProperty('--stem-height', `${stemHeight}px`);
+flowerItem.style.zIndex = Math.floor(stemHeight);
+
+// Added nested inner layers of petals to form a beautiful multi-tiered bloom structure
+flowerItem.innerHTML = `
+<div class="flower-Light" style="top: -50px; left: ${Math.random() * 30 - 15}px;"></div>
+<div class="flower-Light" style="top: -80px; left: ${Math.random() * 40 - 20}px;"></div>
+<div class="flower-head">
+<!-- Outer Petals Layer -->
+<div class="flower-petal_8"></div>
+<div class="flower-petal_8"></div>
+<div class="flower-petal_8"></div>
+<div class="flower-petal_8"></div>
+<div class="flower-petal_8"></div>
+<div class="flower-petal_8"></div>
+<div class="flower-petal_8"></div>
+<div class="flower-petal_8"></div>
+<!-- Inner Lush Petals Layer -->
+<div class="flower-petal_inner"></div>
+<div class="flower-petal_inner"></div>
+<div class="flower-petal_inner"></div>
+<div class="flower-petal_inner"></div>
+<div class="flower-petal_inner"></div>
+<div class="flower-petal_inner"></div>
+<div class="flower-petal_inner"></div>
+<div class="flower-petal_inner"></div>
+<div class="flower-center"></div>
+</div>
+<div class="flower-stem"></div>
+`;
+
+const updateMessage = () => {
+activeNote.innerHTML = `<strong>Reason #${i + 1}:</strong> I like Sonja ${text}`;
+if(i === 0 || i === 1) {
+activeNote.style.borderColor = "#ffe4a0";
+activeNote.style.boxShadow = "0 0 25px rgba(255, 228, 160, 0.5)";
+} else {
+activeNote.style.borderColor = "var(--neon-pink)";
+activeNote.style.boxShadow = "0 0 25px var(--glow-primary)";
+}
+};
+
+flowerItem.addEventListener('mouseenter', () => {
+if(flowerItem.classList.contains('revealed')) updateMessage();
+});
+flowerItem.addEventListener('click', (e) => {
+e.stopPropagation();
+if(flowerItem.classList.contains('revealed')) updateMessage();
+});
+
+forest.appendChild(flowerItem);
+flowerElementsArray.push(flowerItem);
+});
+
+const growNextFlower = () => {
+if (nextFlowerIndex < flowerElementsArray.length) {
+const flowerToReveal = flowerElementsArray[nextFlowerIndex];
+flowerToReveal.classList.add('revealed');
+
+const text = reasons[nextFlowerIndex];
+activeNote.innerHTML = `<strong>Reason #${nextFlowerIndex + 1}:</strong> I like Sonja ${text}`;
+if(nextFlowerIndex === 0 || nextFlowerIndex === 1) {
+activeNote.style.borderColor = "#ffe4a0";
+activeNote.style.boxShadow = "0 0 25px rgba(255, 228, 160, 0.5)";
+} else {
+activeNote.style.borderColor = "var(--neon-pink)";
+activeNote.style.boxShadow = "0 0 25px var(--glow-primary)";
+}
+
+nextFlowerIndex++;
+} else {
+activeNote.innerHTML = "✨ The entire glowing forest has completely bloomed for Sonja! ✨";
+activeNote.style.borderColor = "#ffe4a0";
+activeNote.style.boxShadow = "0 0 30px rgba(255, 228, 160, 0.6)";
+}
+};
+
+document.body.addEventListener('click', growNextFlower);
+activeNote.addEventListener('click', (e) => e.stopPropagation());
+</script>
+</body>
+</html>
